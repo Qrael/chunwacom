@@ -1,4 +1,4 @@
-project('chunithm-touch', 'c', version: '0.4.0', default_options: ['warning_level=2'])
+project('chunithm-wacom-tablet', 'c', version: '0.1.0', default_options: ['warning_level=2'])
 
 add_project_arguments(
     '-DCOBJMACROS',
@@ -29,6 +29,9 @@ cc = meson.get_compiler('c')
 inc = include_directories('.')
 
 leap_inc = include_directories('3rdparty/LeapSDK/include')
+
+wmt_inc = include_directories('WacomMT')
+
 arch = 'x86'
 if host_machine.cpu_family() == 'x86_64'
     arch = 'x64'
@@ -42,4 +45,4 @@ capnhook = subproject('capnhook')
 subdir('leapio')
 subdir('leap-configurator')
 subdir('chuniio')
-subdir('create-touch-window')
+# subdir('create-touch-window')

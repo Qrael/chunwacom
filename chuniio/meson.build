@@ -1,7 +1,7 @@
 chuniio_dll = shared_library(
     'chuniio',
     name_prefix : '',
-    include_directories : [inc, leap_inc],
+    include_directories : [inc, leap_inc, wmt_inc],
     implicit_include_directories : false,
     c_pch : '../precompiled.h',
     link_with: [leapio_lib],

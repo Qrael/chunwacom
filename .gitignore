@@ -1,4 +1,7 @@
-build32
-build64
-.vscode
-LeapSDK
+build32/
+build64/
+build/
+vsbuild/
+.vscode/
+.vs/
+LeapSDK/
