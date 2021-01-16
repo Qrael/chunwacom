@@ -3,7 +3,7 @@ chunwacom
 
 `chunwacom` adds Wacom multi-touch tablet support and Leap Motion for Chunithm. For touch, it works by wrapping the API provided in Wacom Feel Multi-Touch SDK, then handles the touch input (with `chuniio.dll`).
 
-`chunwacom` is based on [`chunithm-touch`](https://github.com/Nat-Lab/chunithm-touch) by Nat-Lab.
+`chunwacom` is based on [`chunithm-touch`](https://github.com/Nat-Lab/chunithm-touch) by [Nat](https://github.com/magicnat).
 
 Headers for WacomMT API are modified from [sample code](https://github.com/Wacom-Developer/wacom-device-kit-windows) provided by Wacom.
 
@@ -20,7 +20,7 @@ If you are using `segatools`:
 
 ### Usage
 
-The program is designed to work with multi-touch capable tablet only.
+The program is designed to work with one multi-touch capable tablet only. If more than one touch tablets are connected, there is no guarantee which tablet the program will read from.
 
 For playing, just tap/slide on the tablet. Slide up to simulate the IR sensor if you are using touch-bashed IR simulation. Raise your hand as if you were playing on the real arcade to simulate the IR sensor if you are using a Leap controller. A video demo of how touch controls work is available [here](https://youtu.be/Uknwet_-wWw). Use F1, F2, and F3 for test, service, and to insert coin.
 
@@ -34,7 +34,7 @@ Settings will be read from `chunwacom.ini`. Here's a list of configurable option
 [ir]
 ; source of control. 'touch' for touchscreen and 'leap' for leap motion.
 control_source = touch
-; height of each touch IR sensor (1000 stands for full vertical height of the tablet)
+; height of each touch IR sensor (1000 stands for full vertical sensing height of the tablet)
 touch_height = 30
 ; touch IR trigger threshold (amount required to move up for a move to
 ; be registered as air)
@@ -83,7 +83,7 @@ Or, if you are using Windows and have Visual Studio installed, you may build it 
 > msbuild build\chunithm-wacom-tablet.sln
 ```
 
-As Chunithm hard disk dump reveals the game is in 32bit, `chunwacom` should be built targeting 32bit. For some reason building with MinGW with 32bit target does not work, so please use Visual Studio instead.
+As Chunithm hard disk dump reveals the game is in 32bit, `chunwacom` should be built targeting 32bit. For some reason building with MinGW with 32bit target does not work for me, so please separate your MinGW and VS build folders for your own safety.
 
 ### License
 UNLICENSE
