@@ -35,10 +35,10 @@ Settings will be read from `chunwacom.ini`. Here's a list of configurable option
 ; source of control. 'touch' for touchscreen and 'leap' for leap motion.
 control_source = touch
 ; height of each touch IR sensor (1000 stands for full vertical height of the tablet)
-touch_height = 50
+touch_height = 30
 ; touch IR trigger threshold (amount required to move up for a move to
 ; be registered as air)
-touch_trigger = 70
+touch_trigger = 50
 ; specifies the axis to track hands on. x, y, z, -x, -y, or -z.
 leap_orientation = y
 ; the minimum height of your hand(s) need to be for it to be registered as air

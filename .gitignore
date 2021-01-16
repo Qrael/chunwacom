@@ -5,3 +5,4 @@ vsbuild/
 .vscode/
 .vs/
 LeapSDK/
+dist/

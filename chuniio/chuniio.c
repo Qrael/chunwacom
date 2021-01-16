@@ -19,8 +19,8 @@
 #define LEAP_Y 1
 #define LEAP_Z 2
 
-static double chuni_ir_trigger_threshold = 0.07;
-static double chuni_ir_height = 0.05;
+static double chuni_ir_trigger_threshold = 0.05;
+static double chuni_ir_height = 0.03;
 static UINT chuni_ir_leap_trigger = 500;
 static UINT chuni_ir_leap_step = 300;
 static uint8_t leap_orientation = LEAP_Y;
@@ -42,8 +42,13 @@ static uint8_t chuni_sliders[32];
 static double start_locations[MAXFINGERS];
 static LONG finger_ids[MAXFINGERS];
 
+static int get_min(int a, int b) {
+    return (a < b) ? a : b;
+}
+
 static int get_slider_from_pos(float x, float y) {
-    return 31 - (x*31);
+    int pos = 32 - (x*32);
+    return pos==32 ? 31 : pos;
 }
 
 // typedef void (* WMT_ATTACH_CALLBACK)(WacomMTCapability deviceInfo, void *userData);
@@ -129,7 +134,7 @@ int FingerCallback(WacomMTFingerCollection *fingerData, void *userData) {
   uint8_t chuni_ir_map_local = 0;
 
   if (fingerData) {
-    for (int i = 0; i < fingerData->FingerCount; i++) {
+    for (int i = 0; i < get_min(fingerData->FingerCount, MAXFINGERS); i++) {
       WacomMTFinger finger = fingerData->Fingers[i];
       if (finger.TouchState != WMTFingerStateNone) {
         //log_info("Finger %d at X: %f, Y: %f\n", finger.FingerID, finger.X, finger.Y);
@@ -142,8 +147,10 @@ int FingerCallback(WacomMTFingerCollection *fingerData, void *userData) {
         if (ir_control_source == CSRC_LEAP || y_diff <= chuni_ir_trigger_threshold || ir_keep_slider) {
             int slider_id = get_slider_from_pos(finger.X, finger.Y);
             //log_info("Finger %d at X: %f, Y: %f; slider %d triggered\n", finger.FingerID, finger.X, finger.Y, slider_id);
-            if (slider_id >= 0 && slider_id < 32) clicked_sliders[slider_id] = 128;
-            if (finger.TouchState == WMTFingerStateUp) { clicked_sliders[slider_id] = 0; }
+            if (slider_id >= 0 && slider_id < 32) {
+              if (finger.TouchState == WMTFingerStateUp) { clicked_sliders[slider_id] = 0; }
+              else { clicked_sliders[slider_id] = 128; }
+            }
         }
       }
     }
@@ -200,9 +207,9 @@ HRESULT chuni_io_jvs_init(void) {
     WCHAR str_control_src[16];
     WCHAR str_leap_orientation[16];
 
-    int8_t temp = GetPrivateProfileIntW(L"ir", L"touch_height", "50", CONFIG);
+    int8_t temp = GetPrivateProfileIntW(L"ir", L"touch_height", "30", CONFIG);
     chuni_ir_height = ((double)temp)/1000;
-    temp = GetPrivateProfileIntW(L"ir", L"touch_trigger", "70", CONFIG);
+    temp = GetPrivateProfileIntW(L"ir", L"touch_trigger", "50", CONFIG);
     chuni_ir_trigger_threshold = ((double)temp)/1000;
     chuni_ir_leap_trigger = GetPrivateProfileIntW(L"ir", L"leap_trigger", 50, CONFIG);
     chuni_ir_leap_step = GetPrivateProfileIntW(L"ir", L"leap_step", 30, CONFIG);
