@@ -5,20 +5,22 @@ chunwacom
 
 `chunwacom` is based on [`chunithm-touch`](https://github.com/Nat-Lab/chunithm-touch) by Nat-Lab.
 
+Headers for WacomMT API are modified from [sample code](https://github.com/Wacom-Developer/wacom-device-kit-windows) provided by Wacom.
+
 ### Installation
 
 `chunwacom` requires `segatools` and Wacom drivers to work. If you are using some other tools to launch Chunithm, you are on your own.
 
 If you are using `segatools`:
 
-1. If you do not have Wacom drivers installed, go install them now.
+1. If you do not have [Wacom drivers](https://www.wacom.com/support/product-support/drivers) installed, go install them now.
 2. Download `chunwacom.zip` from the [release](https://github.com/Joch2520/chunwacom/releases) page.
 3. Unzip `chunwacom.zip`, copy everything in it to the `bin` folder of your game. Override any file that already exists. You may want to make a backup of your `bin` folder.
 4. (Optional) If you plan to use a Leap Motion for AIR and AIR-actions, run `leapconfig.exe` to configure your Leap Motion controller. You may configure the controller manually in `chunwacom.ini` too.
 
 ### Usage
 
-The program is designed to work with only touch-capable tablet.
+The program is designed to work with multi-touch capable tablet only.
 
 For playing, just tap/slide on the tablet. Slide up to simulate the IR sensor if you are using touch-bashed IR simulation. Raise your hand as if you were playing on the real arcade to simulate the IR sensor if you are using a Leap controller. A video demo of how touch controls work is available [here](https://youtu.be/Uknwet_-wWw). Use F1, F2, and F3 for test, service, and to insert coin.
 
@@ -32,7 +34,7 @@ Settings will be read from `chunwacom.ini`. Here's a list of configurable option
 [ir]
 ; source of control. 'touch' for touchscreen and 'leap' for leap motion.
 control_source = touch
-; height of each touch IR sensor (1000 stands for full height)
+; height of each touch IR sensor (1000 stands for full vertical height of the tablet)
 touch_height = 50
 ; touch IR trigger threshold (amount required to move up for a move to
 ; be registered as air)
@@ -81,7 +83,7 @@ Or, if you are using Windows and have Visual Studio installed, you may build it 
 > msbuild build\chunithm-wacom-tablet.sln
 ```
 
+As Chunithm hard disk dump reveals the game is in 32bit, `chunwacom` should be built targeting 32bit. For some reason building with MinGW with 32bit target does not work, so please use Visual Studio instead.
+
 ### License
 UNLICENSE
-
-Headers for WacomMT API are modified from [sample code](https://github.com/Wacom-Developer/wacom-device-kit-windows) provided by Wacom.
