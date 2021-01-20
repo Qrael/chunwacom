@@ -26,7 +26,7 @@ static UINT chuni_ir_leap_step = 300;
 static uint8_t leap_orientation = LEAP_Y;
 static BOOL leap_inverted = FALSE;
 
-static bool raw_input = false;
+static int *deviceIDs;
 static uint8_t ir_control_source = CSRC_TOUCH;
 static bool ir_keep_slider = false;
 
@@ -51,14 +51,6 @@ static int get_slider_from_pos(float x, float y) {
     return pos==32 ? 31 : pos;
 }
 
-// typedef void (* WMT_ATTACH_CALLBACK)(WacomMTCapability deviceInfo, void *userData);
-// typedef int (* WMT_FINGER_CALLBACK)(WacomMTFingerCollection *fingerPacket, void *userData);
-// int LoadWacomMTLib(void);
-// void UnloadWacomMTLib(void);
-// WacomMTError WacomMTInitialize(int libraryAPIVersion);
-// WacomMTError WacomMTRegisterAttachCallback(WMT_ATTACH_CALLBACK attachCallback, void *userData);
-// WacomMTError WacomMTRegisterFingerReadCallback(int deviceID, WacomMTHitRect *hitRect, WacomMTProcessingMode mode, WMT_FINGER_CALLBACK fingerCallback, void *userData);
-
 WacomMTError RegisterForTouch(int deviceID_I);
 
 int FingerCallback(WacomMTFingerCollection *fingerData, void *userData);
@@ -73,7 +65,12 @@ void AttachCallback(WacomMTCapability deviceInfo, void *userRef) {
 
 static WacomMTError InitWacomMTAPI() {
     int loadstatus = LoadWacomMTLib();
-    log_info("WacomMT.dll load status: %d\n", loadstatus);
+    if (loadstatus) {
+      log_info("WacomMT.dll successfully loaded.\n");
+    } else {
+      log_error("WacomMT.dll failed to load.");
+      return WMTErrorDriverNotFound;
+    }
 
     WacomMTError res = WacomMTInitialize(WACOM_MULTI_TOUCH_API_VERSION);
     if (res != WMTErrorSuccess) {
@@ -87,17 +84,17 @@ static WacomMTError InitWacomMTAPI() {
   		return res;
   	}
 
-    int *deviceIDs;
+    deviceIDs = (int *)malloc(sizeof(int));
     int deviceCount = WacomMTGetAttachedDeviceIDs(NULL, 0);
   	if (deviceCount) {
   		int newCount = 0;
   		while (newCount != deviceCount) {
-  			deviceIDs = (int *)malloc(deviceCount * sizeof(int));
+  			realloc(deviceIDs, deviceCount * sizeof(int));
   			newCount = WacomMTGetAttachedDeviceIDs(deviceIDs, deviceCount * sizeof(int));
   		}
 
       for (size_t i = 0; i < deviceCount; i++) {
-        log_info("Device %d ID: %d\n", i, *(deviceIDs+i));
+        log_info("Found Device ID %d.\n", i, *(deviceIDs+i));
         RegisterForTouch(*(deviceIDs+i));
       }
   	}
@@ -137,7 +134,7 @@ int FingerCallback(WacomMTFingerCollection *fingerData, void *userData) {
     for (int i = 0; i < get_min(fingerData->FingerCount, MAXFINGERS); i++) {
       WacomMTFinger finger = fingerData->Fingers[i];
       if (finger.TouchState != WMTFingerStateNone) {
-        //log_info("Finger %d at X: %f, Y: %f\n", finger.FingerID, finger.X, finger.Y);
+        //log_debug("Finger %d at X: %f, Y: %f\n", finger.FingerID, finger.X, finger.Y);
         if (finger.TouchState == WMTFingerStateDown) { start_locations[finger.FingerID] = finger.Y; }
         double y_diff = start_locations[finger.FingerID] - finger.Y;
         if (ir_control_source == CSRC_TOUCH && y_diff > chuni_ir_trigger_threshold) {
@@ -146,7 +143,7 @@ int FingerCallback(WacomMTFingerCollection *fingerData, void *userData) {
         }
         if (ir_control_source == CSRC_LEAP || y_diff <= chuni_ir_trigger_threshold || ir_keep_slider) {
             int slider_id = get_slider_from_pos(finger.X, finger.Y);
-            //log_info("Finger %d at X: %f, Y: %f; slider %d triggered\n", finger.FingerID, finger.X, finger.Y, slider_id);
+            //log_debug("Finger %d at X: %f, Y: %f; slider %d triggered\n", finger.FingerID, finger.X, finger.Y, slider_id);
             if (slider_id >= 0 && slider_id < 32) {
               if (finger.TouchState == WMTFingerStateUp) { clicked_sliders[slider_id] = 0; }
               else { clicked_sliders[slider_id] = 128; }
@@ -213,7 +210,6 @@ HRESULT chuni_io_jvs_init(void) {
     chuni_ir_trigger_threshold = ((double)temp)/1000;
     chuni_ir_leap_trigger = GetPrivateProfileIntW(L"ir", L"leap_trigger", 50, CONFIG);
     chuni_ir_leap_step = GetPrivateProfileIntW(L"ir", L"leap_step", 30, CONFIG);
-    raw_input = GetPrivateProfileIntW(L"io", L"raw_input", 0, CONFIG);
     ir_keep_slider = GetPrivateProfileIntW(L"misc", L"ir_keep_slider", 0, CONFIG);
 
     GetPrivateProfileStringW(L"ir", L"control_source", L"touch", str_control_src, 16, CONFIG);
@@ -244,7 +240,6 @@ HRESULT chuni_io_jvs_init(void) {
     }
 
 
-    log_info("raw_input: %s\n", raw_input ? "enabled" : "disabled");
     log_info("ir_keep_slider: %s\n", ir_keep_slider ? "enabled" : "disabled");
 
     if (ir_control_source == CSRC_TOUCH) {

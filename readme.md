@@ -47,10 +47,6 @@ leap_trigger = 100
 ; the height of each virtual IR sensor (unit: millimeters)
 leap_step = 30
 
-[io]
-; use raw input
-raw_input = 0
-
 [misc]
 ; keep slider(s) holded while on air-action
 ir_keep_slider = 0
