@@ -30,6 +30,8 @@ Settings will be read from `chunwacom.ini`. Here's a list of configurable option
 
 ```
 [options]
+; layout. 1 for 32x1 and 2 for 16x2 key layouts.
+layout = 1
 
 [ir]
 ; source of control. 'touch' for touchscreen and 'leap' for leap motion.

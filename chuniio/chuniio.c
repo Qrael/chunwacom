@@ -38,6 +38,7 @@ static uint8_t chuni_ir_sensor_map = 0;
 static HANDLE chuni_io_slider_thread;
 static bool chuni_io_slider_stop_flag;
 static uint8_t chuni_sliders[32];
+static int chuni_layout;
 
 static double start_locations[MAXFINGERS];
 static LONG finger_ids[MAXFINGERS];
@@ -47,8 +48,16 @@ static int get_min(int a, int b) {
 }
 
 static int get_slider_from_pos(float x, float y) {
-    int pos = 32 - (x*32);
-    return pos==32 ? 31 : pos;
+    int pos;
+    if (chuni_layout==1) {
+      pos = 32 - x*32;
+      pos = pos==32 ? 31 : pos;
+    } else {
+      pos = 16 - x*16;
+      pos = pos==16 ? 15 : pos;
+      pos = pos*2 + 1 - (int)(y*2);
+    }
+    return pos;
 }
 
 WacomMTError RegisterForTouch(int deviceID_I);
@@ -211,6 +220,7 @@ HRESULT chuni_io_jvs_init(void) {
     chuni_ir_leap_trigger = GetPrivateProfileIntW(L"ir", L"leap_trigger", 50, CONFIG);
     chuni_ir_leap_step = GetPrivateProfileIntW(L"ir", L"leap_step", 30, CONFIG);
     ir_keep_slider = GetPrivateProfileIntW(L"misc", L"ir_keep_slider", 0, CONFIG);
+    chuni_layout = GetPrivateProfileIntW(L"options", L"layout", 1, CONFIG)==2 ? 2 : 1;
 
     GetPrivateProfileStringW(L"ir", L"control_source", L"touch", str_control_src, 16, CONFIG);
     GetPrivateProfileStringW(L"ir", L"leap_orientation", L"y", str_leap_orientation, 16, CONFIG);
