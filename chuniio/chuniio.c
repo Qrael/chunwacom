@@ -98,7 +98,7 @@ static WacomMTError InitWacomMTAPI() {
   	if (deviceCount) {
   		int newCount = 0;
   		while (newCount != deviceCount) {
-  			realloc(deviceIDs, deviceCount * sizeof(int));
+  			deviceIDs = realloc(deviceIDs, deviceCount * sizeof(int));
   			newCount = WacomMTGetAttachedDeviceIDs(deviceIDs, deviceCount * sizeof(int));
   		}
 

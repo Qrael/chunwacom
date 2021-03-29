@@ -20,7 +20,7 @@ If you are using `segatools`:
 
 ### Usage
 
-The program is designed to work with one multi-touch capable tablet only. If more than one touch tablets are connected, there is no guarantee which tablet the program will read from.
+The program is designed to work with one multi-touch capable tablet at a time only. If more than one touch tablets are connected, there is no guarantee which tablet the program will read from.
 
 For playing, just tap/slide on the tablet. Slide up to simulate the IR sensor if you are using touch-bashed IR simulation. Raise your hand as if you were playing on the real arcade to simulate the IR sensor if you are using a Leap controller. A video demo of how touch controls work is available [here](https://youtu.be/Uknwet_-wWw). Use F1, F2, and F3 for test, service, and to insert coin.
 

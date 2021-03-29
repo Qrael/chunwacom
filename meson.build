@@ -1,4 +1,4 @@
-project('chunithm-wacom-tablet', 'c', version: '0.1.2', default_options: ['warning_level=2'])
+project('chunithm-wacom-tablet', 'c', version: '0.1.3', default_options: ['warning_level=2'])
 
 add_project_arguments(
     '-DCOBJMACROS',
